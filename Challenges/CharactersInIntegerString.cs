@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace Challenges
 {
@@ -15,16 +16,15 @@ namespace Challenges
         /// <returns></returns>
         private int Calculate(string number)
         {
-            if (number.Length == 1)
+            if (number.Length == 0)
                 return 1;
 
-            if (number.Length == 2)
-                return int.Parse(number) > 26 ? 1 : 2;
+            var count = Calculate(number.Substring(1));
 
-            var result1 = Calculate(number.Substring(1));
-            var firstTwo = int.Parse(number.Substring(0, 2));
-            var result2 = firstTwo <= 26 ? Calculate(number.Substring(2)) : 0;
-            return result1 + result2;
+            if (number.Length > 1 && Int32.Parse(number.Substring(0, 2)) <= 26)
+                count += Calculate(number.Substring(2));
+
+            return count;
         }
 
         [Test]
