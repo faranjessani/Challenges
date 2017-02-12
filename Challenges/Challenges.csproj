@@ -47,7 +47,11 @@
     <Compile Include="CalendarConflicts.cs" />
     <Compile Include="CharactersInIntegerString.cs" />
     <Compile Include="CountACharacterInANumberArray.cs" />
+    <Compile Include="Data Structures\AdjacencyListGraph.cs" />
+    <Compile Include="Data Structures\AdjacencyMatrixGraph.cs" />
+    <Compile Include="Data Structures\CharacterExtensions.cs" />
     <Compile Include="FromMazeToGraph.cs" />
+    <Compile Include="Data Structures\IGraph.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TooManyBrackets.cs" />
   </ItemGroup>

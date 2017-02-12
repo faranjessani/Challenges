@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using NUnit.Framework;
 
 namespace Challenges
@@ -71,15 +70,12 @@ namespace Challenges
             var count = 0;
             var rows = _maze.Split('\n').Select(r => r.Trim()).ToArray();
             // Skip first and last rows
-            for (int i = 1; i < rows.Length - 1; i++)
+            for (var i = 1; i < rows.Length - 1; i++)
+            for (var j = 1; j < rows[i].Length - 1; j++)
             {
-                // Skip first and last columns
-                for (int j = 1; j < rows[i].Length - 1; j++)
-                {
-                    if (!rows[i][j].IsNode()) continue;
-                    var neighbours = new[] {rows[i][j - 1], rows[i][j + 1], rows[i - 1][j], rows[i + 1][j]};
-                    if (neighbours.Count(n => n.IsNode()) >= 3) count++;
-                }
+                if (!rows[i][j].IsNode()) continue;
+                var neighbours = new[] {rows[i][j - 1], rows[i][j + 1], rows[i - 1][j], rows[i + 1][j]};
+                if (neighbours.Count(n => n.IsNode()) >= 3) count++;
             }
 
             Assert.That(count, Is.EqualTo(832));
@@ -88,77 +84,35 @@ namespace Challenges
         [Test]
         public void FindAllIntersectionsUsingAdjacencyMatrix()
         {
-            var count = 0;
-            int[,] matrix = BuildAdjacencyMatrix(_maze);
-            for (int i = 0; i < matrix.GetLength(0); i++)
-            {
-                int innerCount = 0;
-                for (int j = 0; j < matrix.GetLength(1); j++)
-                {
-                    if (matrix[i, j] == 1) innerCount++;
-                }
-                if (innerCount >= 3)
-                {
-                    count++;
-                }
-            }
+            var nodeCount = GetNodeCount();
+            var graph = new AdjacencyMatrixGraph(nodeCount);
+            ParseMazeIntoGraph(_maze, graph);
 
+            var count = 0;
+            for (var i = 0; i < graph.GetNumberOfVerticies(); i++)
+                if (graph.GetAdjacentVerticies(i).Count() >= 3) count++;
+            
             Assert.That(count, Is.EqualTo(832));
         }
 
         [Test]
         public void FindAllIntersectionsUsingAdjacencyList()
         {
+            var nodeCount = GetNodeCount();
+            var graph = new AdjacencyListGraph(nodeCount);
+            ParseMazeIntoGraph(_maze, graph);
+
             var count = 0;
-            var adjacencyList = BuildAdjacencyList(_maze);
-            foreach (var adjacencyListKey in adjacencyList.Keys)
-            {
-                if (adjacencyList[adjacencyListKey].Count >= 3) count++;
-            }
+            for (var i = 0; i < graph.GetNumberOfVerticies(); i++)
+                if (graph.GetAdjacentVerticies(i).Count() >= 3) count++;
+
             Assert.That(count, Is.EqualTo(832));
         }
 
-        private static int[,] BuildAdjacencyMatrix(string maze)
+        private int GetNodeCount()
         {
-            var rows = maze.Split('\n').Select(r => r.Trim()).ToArray();
-            // in the matrix [i][j] = there's an edge between those two nodes
-            int nPotentialNodes = (rows.Length - 2) * (rows[0].Length - 2);
-            int x = rows.Length - 2, y = rows[0].Length - 2;
-            var adjacencyMatrix = new int[nPotentialNodes, nPotentialNodes];
-            // Skip first and last rows
-            for (int i = 1; i < rows.Length - 1; i++)
-            {
-                // Skip first and last columns
-                for (int j = 1; j < rows[i].Length - 1; j++)
-                {
-                    int nodeIndex = GetNodeId(i, j, rows[i].Length);
-                    if (rows[i][j].IsNode())
-                    {
-                        if (rows[i][j - 1].IsNode())
-                        {
-                            int neighbourIndex = GetNodeId(i, j - 1, rows[i].Length);
-                            adjacencyMatrix[nodeIndex, neighbourIndex]++;
-                        }
-                        if (rows[i][j + 1].IsNode())
-                        {
-                            int neighbourIndex = GetNodeId(i, j + 1, rows[i].Length);
-                            adjacencyMatrix[nodeIndex, neighbourIndex]++;
-                        }
-                        if (rows[i - 1][j].IsNode())
-                        {
-                            int neighbourIndex = GetNodeId(i - 1, j, rows[i].Length);
-                            adjacencyMatrix[nodeIndex, neighbourIndex]++;
-                        }
-                        if (rows[i + 1][j].IsNode())
-                        {
-                            int neighbourIndex = GetNodeId(i + 1, j, rows[i].Length); 
-                            adjacencyMatrix[nodeIndex, neighbourIndex]++;
-                        }
-                    }
-                }
-            }
-
-            return adjacencyMatrix;
+            var rows = _maze.Split('\n');
+            return (rows.Length - 2) * (rows[0].Length - 2);
         }
 
         private static int GetNodeId(int i, int j, int length)
@@ -166,48 +120,25 @@ namespace Challenges
             return (i - 1) * (length - 2) + (j - 1);
         }
 
-        private static Dictionary<int, IList<int>> BuildAdjacencyList(string maze)
+        private void ParseMazeIntoGraph(string maze, IGraph graph)
         {
-            var adjacencyList = new Dictionary<int, IList<int>>();
-
             var rows = maze.Split('\n').Select(r => r.Trim()).ToArray();
+
             // Skip first and last rows
-            for (int i = 1; i < rows.Length - 1; i++)
-            {
-                // Skip first and last columns
-                for (int j = 1; j < rows[i].Length - 1; j++)
+            for (var i = 1; i < rows.Length - 1; i++)
+            for (var j = 1; j < rows[i].Length - 1; j++)
+                if (rows[i][j].IsNode())
                 {
-                    if (rows[i][j].IsNode())
-                    {
-                        // Found a vertex
-                        var key = GetNodeId(i, j, rows[i].Length); ;
-                        if (!adjacencyList.ContainsKey(key))
-                        {
-                            adjacencyList[key] = new List<int>() {};
-                        }
-
-                        //Check if neighbours are verticies
-                        if (rows[i][j - 1].IsNode())
-                        {
-                            adjacencyList[key].Add(GetNodeId(i, j - 1, rows[i].Length));
-                        }
-                        if (rows[i][j + 1].IsNode())
-                        {
-                            adjacencyList[key].Add(GetNodeId(i, j + 1, rows[i].Length));
-                        }
-                        if (rows[i - 1][j].IsNode())
-                        {
-                            adjacencyList[key].Add(GetNodeId(i - 1, j, rows[i].Length));
-                        }
-                        if (rows[i + 1][j].IsNode())
-                        {
-                            adjacencyList[key].Add(GetNodeId(i + 1, j, rows[i].Length));
-                        }
-                    }
+                    //Check if neighbours are verticies
+                    if (rows[i][j - 1].IsNode())
+                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i, j - 1, rows[i].Length));
+                    if (rows[i][j + 1].IsNode())
+                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i, j + 1, rows[i].Length));
+                    if (rows[i - 1][j].IsNode())
+                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i - 1, j, rows[i].Length));
+                    if (rows[i + 1][j].IsNode())
+                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i + 1, j, rows[i].Length));
                 }
-            }
-
-            return adjacencyList;
         }
 
         private readonly string _maze =
@@ -248,13 +179,5 @@ namespace Challenges
 #.#.#.#.#.###.#.#.#.#.#.#.#.#.#.#.#.#.#.###.#.#.#####.#.###.#.#.#####.#.#.#.#####.#.#.###.###.#.#.#.#.#.#.#.#####.#.#.#####.###.###.###.###.#.#.#.#.#.#.#########.#####.#.#.#.#.#.#
 #.#.#.#.............#...#...#.#.....#...........#.........#...#.#.#...#.#.........#.........#.........#.....#.........#...#...#...#..1#.....#.#.#...#.#.....#...#...........#.....#
 ###################################################################################################################################################################################";
-    }
-
-    public static class CharacterExtensions
-    {
-        public static bool IsNode(this char c)
-        {
-            return c != '#';
-        }
     }
 }
