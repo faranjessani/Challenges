@@ -30,7 +30,7 @@ namespace Challenges
             return _height * _width;
         }
 
-        private int GetNodeIndex(Tuple<int, int> node)
+        public int GetGraphNodeIndex(Tuple<int, int> node)
         {
             return node.Item1 * _width + node.Item2;
         }
@@ -57,14 +57,14 @@ namespace Challenges
                     {
                         if (IsNode(neighbour))
                         {
-                            graph.AddEdge(GetNodeIndex(currentNode), GetNodeIndex(neighbour));
+                            graph.AddEdge(GetGraphNodeIndex(currentNode), GetGraphNodeIndex(neighbour));
                         }
                     }
                 }
             }
         }
 
-        private IEnumerable<Tuple<int, int>> GetNeighboursOf(Tuple<int, int> node)
+        protected IEnumerable<Tuple<int, int>> GetNeighboursOf(Tuple<int, int> node)
         {
             return new Tuple<int, int>[4]
             {

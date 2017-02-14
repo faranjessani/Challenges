@@ -51,6 +51,7 @@
     <Compile Include="Data Structures\AdjacencyMatrixGraph.cs" />
     <Compile Include="FromMazeToGraph.cs" />
     <Compile Include="Data Structures\IGraph.cs" />
+    <Compile Include="GraphTraverser.cs" />
     <Compile Include="Maze.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TooManyBrackets.cs" />

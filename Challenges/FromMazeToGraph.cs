@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 
 namespace Challenges
@@ -69,6 +72,41 @@ namespace Challenges
         public void SetUp()
         {
             _maze = new Maze(_mazeInput);
+        }
+
+        [Test]
+        public void FindIntersectionClosestNeighbours()
+        {
+            IGraph mazeGraph = new AdjacencyListGraph(_maze.GetNodeCount());
+            _maze.ParseMazeIntoGraph(ref mazeGraph);
+            var intersectionSet = new HashSet<int>();
+            for (var i = 0; i < mazeGraph.GetNumberOfVerticies(); i++)
+            {
+                if (mazeGraph.GetAdjacentVerticies(i).Count() >= 3)
+                {
+                    intersectionSet.Add(i);
+                }
+            }
+            var graphTraverser = new GraphTraverser(mazeGraph, intersectionSet);
+
+            IGraph intersectionGraph = new AdjacencyListGraph(_maze.GetNodeCount());
+            foreach (var i in intersectionSet)
+            {
+                var nearestNeighbours = graphTraverser.GetNearestNeighbours(i);
+                foreach (var nearestNeighbour in nearestNeighbours)
+                {
+                    intersectionGraph.AddEdge(i, nearestNeighbour);
+                }
+            }
+
+            var adjacentVerticies = intersectionGraph.GetAdjacentVerticies(2).ToList();
+            Assert.That(adjacentVerticies.Count, Is.EqualTo(2));
+            Assert.That(_maze.ConvertGraphIndexToMazeIndex(adjacentVerticies[0]), Is.EqualTo(new Tuple<int,int>(2, 4)));
+            Assert.That(_maze.ConvertGraphIndexToMazeIndex(adjacentVerticies[1]), Is.EqualTo(new Tuple<int,int>(2, 2)));
+
+            var secondIndex = _maze.GetGraphNodeIndex(new Tuple<int, int>(2, 4));
+            adjacentVerticies = intersectionGraph.GetAdjacentVerticies(secondIndex).ToList();
+            Assert.That(adjacentVerticies.Count, Is.EqualTo(4));
         }
 
         [Test]
