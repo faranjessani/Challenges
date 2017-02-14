@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using NUnit.Framework;
 
 namespace Challenges
@@ -64,84 +63,59 @@ namespace Challenges
     [TestFixture]
     public class FromMazeToGraph
     {
-        [Test]
-        public void FindAllIntersections()
-        {
-            var count = 0;
-            var rows = _maze.Split('\n').Select(r => r.Trim()).ToArray();
-            // Skip first and last rows
-            for (var i = 1; i < rows.Length - 1; i++)
-            for (var j = 1; j < rows[i].Length - 1; j++)
-            {
-                if (!rows[i][j].IsNode()) continue;
-                var neighbours = new[] {rows[i][j - 1], rows[i][j + 1], rows[i - 1][j], rows[i + 1][j]};
-                if (neighbours.Count(n => n.IsNode()) >= 3) count++;
-            }
+        private Maze _maze;
 
-            Assert.That(count, Is.EqualTo(832));
+        [SetUp]
+        public void SetUp()
+        {
+            _maze = new Maze(_mazeInput);
         }
 
         [Test]
         public void FindAllIntersectionsUsingAdjacencyMatrix()
         {
-            var nodeCount = GetNodeCount();
-            var graph = new AdjacencyMatrixGraph(nodeCount);
-            ParseMazeIntoGraph(_maze, graph);
+            IGraph graph = new AdjacencyMatrixGraph(_maze.GetNodeCount());
+            _maze.ParseMazeIntoGraph(ref graph);
 
-            var count = 0;
+            int numberOfIntersections = 0, sumOfRowIndicies = 0, sumOfColumnIndicies = 0;
             for (var i = 0; i < graph.GetNumberOfVerticies(); i++)
-                if (graph.GetAdjacentVerticies(i).Count() >= 3) count++;
-            
-            Assert.That(count, Is.EqualTo(832));
+            {
+                if (graph.GetAdjacentVerticies(i).Count() < 3) continue;
+
+                numberOfIntersections++;
+                var mazeIndexes = _maze.ConvertGraphIndexToMazeIndex(i);
+                sumOfRowIndicies += mazeIndexes.Item1 + 1;
+                sumOfColumnIndicies += mazeIndexes.Item2 + 1;
+            }
+
+            Assert.That(numberOfIntersections, Is.EqualTo(832));
+            Assert.That(sumOfRowIndicies, Is.EqualTo(15088));
+            Assert.That(sumOfColumnIndicies, Is.EqualTo(72946));
         }
 
         [Test]
         public void FindAllIntersectionsUsingAdjacencyList()
         {
-            var nodeCount = GetNodeCount();
-            var graph = new AdjacencyListGraph(nodeCount);
-            ParseMazeIntoGraph(_maze, graph);
+            IGraph graph = new AdjacencyListGraph(_maze.GetNodeCount());
+            _maze.ParseMazeIntoGraph(ref graph);
 
-            var count = 0;
+            int numberOfIntersections = 0, sumOfRowIndicies = 0, sumOfColumnIndicies = 0;
             for (var i = 0; i < graph.GetNumberOfVerticies(); i++)
-                if (graph.GetAdjacentVerticies(i).Count() >= 3) count++;
+            {
+                if (graph.GetAdjacentVerticies(i).Count() < 3) continue;
 
-            Assert.That(count, Is.EqualTo(832));
+                numberOfIntersections++;
+                var mazeIndexes = _maze.ConvertGraphIndexToMazeIndex(i);
+                sumOfRowIndicies += mazeIndexes.Item1 + 1;
+                sumOfColumnIndicies += mazeIndexes.Item2 + 1;
+            }
+
+            Assert.That(numberOfIntersections, Is.EqualTo(832));
+            Assert.That(sumOfRowIndicies, Is.EqualTo(15088));
+            Assert.That(sumOfColumnIndicies, Is.EqualTo(72946));
         }
 
-        private int GetNodeCount()
-        {
-            var rows = _maze.Split('\n');
-            return (rows.Length - 2) * (rows[0].Length - 2);
-        }
-
-        private static int GetNodeId(int i, int j, int length)
-        {
-            return (i - 1) * (length - 2) + (j - 1);
-        }
-
-        private void ParseMazeIntoGraph(string maze, IGraph graph)
-        {
-            var rows = maze.Split('\n').Select(r => r.Trim()).ToArray();
-
-            // Skip first and last rows
-            for (var i = 1; i < rows.Length - 1; i++)
-            for (var j = 1; j < rows[i].Length - 1; j++)
-                if (rows[i][j].IsNode())
-                {
-                    //Check if neighbours are verticies
-                    if (rows[i][j - 1].IsNode())
-                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i, j - 1, rows[i].Length));
-                    if (rows[i][j + 1].IsNode())
-                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i, j + 1, rows[i].Length));
-                    if (rows[i - 1][j].IsNode())
-                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i - 1, j, rows[i].Length));
-                    if (rows[i + 1][j].IsNode())
-                        graph.AddEdge(GetNodeId(i, j, rows[i].Length), GetNodeId(i + 1, j, rows[i].Length));
-                }
-        }
-
-        private readonly string _maze =
+        private string _mazeInput =
             @"###################################################################################################################################################################################
 #.....#.#.....#...#....4#.....#.#...#.........#...#...............#...................#...#.#...........#.#...........#.#.#.#.........#.#.......#...#...........#.....#...#7..#.#.#
 ###.#.#.###.#.#.###.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.###.#.###.#.###.#.#.#.###.###.#.#####.###.#.#.###.#.#.#.#.#.#.#.#.#.#.#.#.###.#####.#.#.#.#.#####.#.#.#.###.#.#.#.#.#####.#.#.#.#
