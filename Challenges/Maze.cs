@@ -9,6 +9,7 @@ namespace Challenges
         private readonly char[,] _maze;
         private readonly int _height;
         private readonly int _width;
+        private IDictionary<char, int> _namedNodeToGraphIndexMap;
 
         public Maze(string maze)
         {
@@ -23,6 +24,7 @@ namespace Challenges
             }
             _height = _maze.GetLength(0);
             _width = _maze.GetLength(1);
+            _namedNodeToGraphIndexMap = new Dictionary<char, int>();
         }
 
         public int GetNodeCount()
@@ -78,8 +80,21 @@ namespace Challenges
         public bool IsNode(Tuple<int, int> node)
         {
             if (node.Item1 >= _height || node.Item2 >= _width ||
-                node.Item1 < 0 || node.Item2 < 0) return false;
-            return _maze[node.Item1, node.Item2] != '#';
+                node.Item1 < 0 || node.Item2 < 0)
+                return false;
+
+            var nodeCharacter = _maze[node.Item1, node.Item2];
+            if (nodeCharacter == '#')
+                return false;
+            if (nodeCharacter != '.')
+                _namedNodeToGraphIndexMap[nodeCharacter] = GetGraphNodeIndex(node);
+
+            return true;
+        }
+
+        public int GetGraphNodeIndexForNamedNode(char namedNode)
+        {
+            return _namedNodeToGraphIndexMap[namedNode];
         }
     }
 }

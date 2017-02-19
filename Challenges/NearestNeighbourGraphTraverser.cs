@@ -4,12 +4,12 @@ using System.Linq;
 
 namespace Challenges
 {
-    public class GraphTraverser
+    public class NearestNeighbourGraphTraverser
     {
         private readonly IGraph _graph;
         private readonly ISet<int> _intersections;
 
-        public GraphTraverser(IGraph graph, ISet<int> intersections)
+        public NearestNeighbourGraphTraverser(IGraph graph, ISet<int> intersections)
         {
             _graph = graph;
             _intersections = intersections;

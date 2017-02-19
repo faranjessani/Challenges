@@ -1,16 +1,18 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using NUnit.Framework;
 
 namespace Challenges
 {
     /// <summary>
-    /// [2017-01-11] Challenge #299 [Intermediate] From Maze to graph
-    /// https://www.reddit.com/r/dailyprogrammer/comments/5nciz5/20170111_challenge_299_intermediate_from_maze_to/
+    /// [2017-01-09] Challenge #298 [Hard] Functional Maze solving
+    /// https://www.reddit.com/r/dailyprogrammer/comments/5mzr6x/20170109_challenge_298_hard_functional_maze/
     /// 
-    /// An easy and harder challenge using Monday's maze
+    /// There will be a part 2 challenge based on bonus. I am sure we have done maze solving before, but its been a while, and challenge is mainly about the bonus.
+    /// Borrowing from adventofcode.com, http://adventofcode.com/2016/day/24, solve the following maze returning the path (length) visiting nodes labelled 1 to 7 starting from 0. 
+    /// # are walls. May not travel diagonally. Correct answer for path length with this input is 460
+    /// 
     /// ###################################################################################################################################################################################
     /// #.....#.#.....#...#....4#.....#.#...#.........#...#...............#...................#...#.#...........#.#...........#.#.#.#.........#.#.......#...#...........#.....#...#7..#.#.#
     /// ###.#.#.###.#.#.###.#.#.#.#.#.#.#.#.#.#.#.#.#.#.#.###.#.###.#.###.#.#.#.###.###.#.#####.###.#.#.###.#.#.#.#.#.#.#.#.#.#.#.#.###.#####.#.#.#.#.#####.#.#.#.###.#.#.#.#.#####.#.#.#.#
@@ -49,108 +51,89 @@ namespace Challenges
     /// #.#.#.#.............#...#...#.#.....#...........#.........#...#.#.#...#.#.........#.........#.........#.....#.........#...#...#...#..1#.....#.#.#...#.#.....#...#...........#.....#
     /// ###################################################################################################################################################################################
     /// 
-    /// 1. Find all nodes(easy)
-    /// Find all points(nodes) on the maze that are "intersections": Have 3 or more valid directions to move from.
-    /// Answer: There are 832. With 0-based indexes, the sum of row and column indexes are: 15088 72946
+    /// This is a fairly large maze, and you may wish to resort to one of the main graph algorithms that minimize how often a node cost is calculated. 
+    /// Namely Astar though there are other options.
     /// 
-    /// 2. Get distance from each node to all other "close nodes"
-    /// From every interesection(node), move in all directions until you hit another intersection, and record the shortest path to all "close" intersections.
-    /// Basically, you are finding the nearest neighbours to each node.
-    /// For example, looking at the top left of the maze, there is a node in row 1, column 3. 
-    /// This node has only 2 neighbours: one that is 4 moves away in row 3 column 5. The other 2 moves away at row 3 column 3. 
-    /// The 3 5 node in turn, has 4 neighbours: The first node, its other neighbour, one 2 moves below it, and other 2 moves to the right.
-    /// output: list for each node,
-    /// node, list of neighbours and distance from node to each neighbour.
-    /// Full list will be in comments
+    /// bonus
+    /// For the bonus, the requirement is to use higher order functions for your algorithm. The "end function" should be one with the simplest interface:
+    /// searchfunction(start, goal, mazeORgraph)
+    /// called to solve paths from 0 to 1, would be called with searchfunction(0, 1, abovemaze)
+    /// You might handcraft this function to solve the problem without the bonus.
+    /// To build this function functionally, inputs to the higher order function
+    /// include:
+    ///     transform start and goal into internal states(for this problem likely 2d indexes of where each position is located)
+    ///     test when the goal state is reached
+    ///     determine the valid neighbours of a node(in this example, excludes walls. May exclude previously visited nodes)
+    ///     Calculation for distance travelled so far(may be linked list walking or retrieving a cached number)
+    ///     Scoring function(often called heuristic in Astar terminology) to select the most promising node(s) to investigate further.
+    ///     For this type of maze, manhattan distance.
+    ///     Other parameters relevant to your algorithm.
+    /// Your higher order function might transform the functional inputs to fit with/bind internal state structures.
+    /// The general idea behind this higher order functional approach is that it might work with completely different reference inputs than a start and goal symbol, and a 2d map/maze.Part 2 will request just that.
+    /// 
+    /// bonus #2
+    /// Enhance the functional approach with for example:
+    ///     default functional parameters, where perhaps all of functions used to solve a 2d maze, are the defaults if no functions are provided to the higher order function.
+    ///    a dsl, that makes multi-function input easier.
     /// </summary>
     [TestFixture]
-    public class FromMazeToGraph
+    public class FunctionalMazeSolving
     {
         private Maze _maze;
 
         [SetUp]
         public void SetUp()
         {
-            _maze = new Maze(_mazeInput);
+            string s = @"###########
+#0.1.....2#
+#.#######.#
+#4.......3#
+###########
+";
+            _maze = new Maze(s);
         }
 
         [Test]
-        public void FindIntersectionClosestNeighbours()
+        public void SampleTest()
         {
             IGraph mazeGraph = new AdjacencyListGraph(_maze.GetNodeCount());
             _maze.ParseMazeIntoGraph(ref mazeGraph);
-            var intersectionSet = new HashSet<int>();
-            for (var i = 0; i < mazeGraph.GetNumberOfVerticies(); i++)
-            {
-                if (mazeGraph.GetAdjacentVerticies(i).Count() >= 3)
-                {
-                    intersectionSet.Add(i);
-                }
-            }
-            var graphTraverser = new NearestNeighbourGraphTraverser(mazeGraph, intersectionSet);
+            var graphTraverser = new NamedNodeGraphTraverser(mazeGraph);
+            int pathLength = 0;
+            var startingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 0));
+            var endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 4));
+            pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
+            Assert.That(pathLength, Is.EqualTo(2));
 
-            IGraph intersectionGraph = new AdjacencyListGraph(_maze.GetNodeCount());
-            foreach (var intersection in intersectionSet)
-            {
-                var nearestNeighbours = graphTraverser.GetNearestNeighbours(intersection);
-                foreach (var nearestNeighbour in nearestNeighbours)
-                {
-                    intersectionGraph.AddEdge(intersection, nearestNeighbour);
-                }
-            }
+            pathLength = 0;
+            startingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 4));
+            endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 1));
+            pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
+            Assert.That(pathLength, Is.EqualTo(4));
 
-            var adjacentVerticies = intersectionGraph.GetAdjacentVerticies(2).ToList();
-            Assert.That(adjacentVerticies.Count, Is.EqualTo(2));
-            Assert.That(_maze.ConvertGraphIndexToMazeIndex(adjacentVerticies[0]), Is.EqualTo(new Tuple<int,int>(2, 4)));
-            Assert.That(_maze.ConvertGraphIndexToMazeIndex(adjacentVerticies[1]), Is.EqualTo(new Tuple<int,int>(2, 2)));
-
-            var secondIndex = _maze.GetGraphNodeIndex(new Tuple<int, int>(2, 4));
-            adjacentVerticies = intersectionGraph.GetAdjacentVerticies(secondIndex).ToList();
-            Assert.That(adjacentVerticies.Count, Is.EqualTo(4));
+            pathLength = 0;
+            startingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 1));
+            endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 2));
+            pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
+            Assert.That(pathLength, Is.EqualTo(6));
         }
 
         [Test]
-        public void FindAllIntersectionsUsingAdjacencyMatrix()
+        public void GetPathLengthFromZeroThroughSeven()
         {
-            IGraph graph = new AdjacencyMatrixGraph(_maze.GetNodeCount());
-            _maze.ParseMazeIntoGraph(ref graph);
-
-            int numberOfIntersections = 0, sumOfRowIndicies = 0, sumOfColumnIndicies = 0;
-            for (var i = 0; i < graph.GetNumberOfVerticies(); i++)
+            _maze = new Maze(_mazeInput);
+            IGraph mazeGraph = new AdjacencyListGraph(_maze.GetNodeCount());
+            _maze.ParseMazeIntoGraph(ref mazeGraph);
+            var graphTraverser = new NamedNodeGraphTraverser(mazeGraph);
+            int pathLength = 0;
+            for (int i = 0; i < 7; i++)
             {
-                if (graph.GetAdjacentVerticies(i).Count() < 3) continue;
-
-                numberOfIntersections++;
-                var mazeIndexes = _maze.ConvertGraphIndexToMazeIndex(i);
-                sumOfRowIndicies += mazeIndexes.Item1 + 1;
-                sumOfColumnIndicies += mazeIndexes.Item2 + 1;
+                var startingNode = _maze.GetGraphNodeIndexForNamedNode((char) ('0' + i));
+                var endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + i + 1));
+                pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
             }
 
-            Assert.That(numberOfIntersections, Is.EqualTo(832));
-            Assert.That(sumOfRowIndicies, Is.EqualTo(15088));
-            Assert.That(sumOfColumnIndicies, Is.EqualTo(72946));
-        }
-
-        [Test]
-        public void FindAllIntersectionsUsingAdjacencyList()
-        {
-            IGraph graph = new AdjacencyListGraph(_maze.GetNodeCount());
-            _maze.ParseMazeIntoGraph(ref graph);
-
-            int numberOfIntersections = 0, sumOfRowIndicies = 0, sumOfColumnIndicies = 0;
-            for (var i = 0; i < graph.GetNumberOfVerticies(); i++)
-            {
-                if (graph.GetAdjacentVerticies(i).Count() < 3) continue;
-
-                numberOfIntersections++;
-                var mazeIndexes = _maze.ConvertGraphIndexToMazeIndex(i);
-                sumOfRowIndicies += mazeIndexes.Item1 + 1;
-                sumOfColumnIndicies += mazeIndexes.Item2 + 1;
-            }
-
-            Assert.That(numberOfIntersections, Is.EqualTo(832));
-            Assert.That(sumOfRowIndicies, Is.EqualTo(15088));
-            Assert.That(sumOfColumnIndicies, Is.EqualTo(72946));
+            Assert.That(pathLength, Is.EqualTo(460));
         }
 
         private string _mazeInput =
