@@ -32,5 +32,10 @@ namespace Challenges
         {
             return _adjacencyMatrix.GetLength(0);
         }
+
+        public void AddEdge(int vertex1, int vertex2, int weight)
+        {
+            AddEdge(vertex1, vertex2);
+        }
     }
 }

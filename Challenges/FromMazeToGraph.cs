@@ -95,7 +95,7 @@ namespace Challenges
                 var nearestNeighbours = graphTraverser.GetNearestNeighbours(intersection);
                 foreach (var nearestNeighbour in nearestNeighbours)
                 {
-                    intersectionGraph.AddEdge(intersection, nearestNeighbour);
+                    intersectionGraph.AddEdge(intersection, nearestNeighbour, 1);
                 }
             }
 

@@ -59,7 +59,7 @@ namespace Challenges
                     {
                         if (IsNode(neighbour))
                         {
-                            graph.AddEdge(GetGraphNodeIndex(currentNode), GetGraphNodeIndex(neighbour));
+                            graph.AddEdge(GetGraphNodeIndex(currentNode), GetGraphNodeIndex(neighbour), 1);
                         }
                     }
                 }

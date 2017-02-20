@@ -49,6 +49,7 @@
     <Compile Include="CountACharacterInANumberArray.cs" />
     <Compile Include="Data Structures\AdjacencyListGraph.cs" />
     <Compile Include="Data Structures\AdjacencyMatrixGraph.cs" />
+    <Compile Include="Data Structures\WeightedAdjacencyListGraph.cs" />
     <Compile Include="FromMazeToGraph.cs" />
     <Compile Include="Data Structures\IGraph.cs" />
     <Compile Include="FunctionalMazeSolving.cs" />

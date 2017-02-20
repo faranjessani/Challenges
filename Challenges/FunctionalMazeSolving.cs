@@ -69,7 +69,8 @@ namespace Challenges
     ///     For this type of maze, manhattan distance.
     ///     Other parameters relevant to your algorithm.
     /// Your higher order function might transform the functional inputs to fit with/bind internal state structures.
-    /// The general idea behind this higher order functional approach is that it might work with completely different reference inputs than a start and goal symbol, and a 2d map/maze.Part 2 will request just that.
+    /// The general idea behind this higher order functional approach is that it might work with completely different reference inputs than a start and goal symbol, and a 2d map/maze.
+    /// Part 2 will request just that.
     /// 
     /// bonus #2
     /// Enhance the functional approach with for example:
@@ -79,41 +80,34 @@ namespace Challenges
     [TestFixture]
     public class FunctionalMazeSolving
     {
-        private Maze _maze;
-
-        [SetUp]
-        public void SetUp()
+        [Test]
+        public void SmallerGraphTraversalTest()
         {
             string s = @"###########
-#0.1.....2#
-#.#######.#
-#4.......3#
-###########
-";
-            _maze = new Maze(s);
-        }
+                         #0.1.....2#
+                         #.#######.#
+                         #4.......3#
+                         ###########";
+            var maze = new Maze(s);
 
-        [Test]
-        public void SampleTest()
-        {
-            IGraph mazeGraph = new AdjacencyListGraph(_maze.GetNodeCount());
-            _maze.ParseMazeIntoGraph(ref mazeGraph);
+            IGraph mazeGraph = new AdjacencyListGraph(maze.GetNodeCount());
+            maze.ParseMazeIntoGraph(ref mazeGraph);
             var graphTraverser = new NamedNodeGraphTraverser(mazeGraph);
             int pathLength = 0;
-            var startingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 0));
-            var endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 4));
+            var startingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + 0));
+            var endingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + 4));
             pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
             Assert.That(pathLength, Is.EqualTo(2));
 
             pathLength = 0;
-            startingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 4));
-            endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 1));
+            startingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + 4));
+            endingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + 1));
             pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
             Assert.That(pathLength, Is.EqualTo(4));
 
             pathLength = 0;
-            startingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 1));
-            endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + 2));
+            startingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + 1));
+            endingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + 2));
             pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
             Assert.That(pathLength, Is.EqualTo(6));
         }
@@ -121,19 +115,31 @@ namespace Challenges
         [Test]
         public void GetPathLengthFromZeroThroughSeven()
         {
-            _maze = new Maze(_mazeInput);
-            IGraph mazeGraph = new AdjacencyListGraph(_maze.GetNodeCount());
-            _maze.ParseMazeIntoGraph(ref mazeGraph);
+            var maze = new Maze(_mazeInput);
+            IGraph mazeGraph = new AdjacencyListGraph(maze.GetNodeCount());
+            maze.ParseMazeIntoGraph(ref mazeGraph);
             var graphTraverser = new NamedNodeGraphTraverser(mazeGraph);
-            int pathLength = 0;
-            for (int i = 0; i < 7; i++)
+            IGraph shortestPathGraph = new WeightedAdjacencyListGraph(8);
+            for (var i = 0; i <= 7; i++)
             {
-                var startingNode = _maze.GetGraphNodeIndexForNamedNode((char) ('0' + i));
-                var endingNode = _maze.GetGraphNodeIndexForNamedNode((char)('0' + i + 1));
-                pathLength += graphTraverser.GetPathLength(startingNode, endingNode);
+                for (var j = 0; j <= 7; j++)
+                {
+                    if (j == i)
+                    {
+                        shortestPathGraph.AddEdge(i, j, 0);
+                        continue;
+                    }
+                    var startingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + i));
+                    var endingNode = maze.GetGraphNodeIndexForNamedNode((char)('0' + j));
+                    var pathLength = graphTraverser.GetPathLength(startingNode, endingNode);
+                    shortestPathGraph.AddEdge(i, j, pathLength);
+                }
             }
 
-            Assert.That(pathLength, Is.EqualTo(460));
+            // Implement A* algorithm in this traverser
+            //var swGraphTraverser = new SmallestWeightGraphTraverser(shortestPathGraph);
+
+            Assert.That(1, Is.EqualTo(460));
         }
 
         private string _mazeInput =
