@@ -41,7 +41,7 @@ namespace Challenges
         private double HeuristicFunction(int startingNode, AdjacentNode node)
         {
             var nodeMazeIndex = _maze.GetMazeIndexForNamedNode((char) ('0' + node.NodeId));
-            var startingNodeMazeIndex = _maze.GetMazeIndexForNamedNode((char) ('0' + startingNode));
+            var startingNodeMazeIndex = _maze.GetMazeIndexForNamedNode((char) ('0' + 7));
 
             var heuristicValue =
                 Math.Sqrt(Math.Pow(Math.Abs(nodeMazeIndex.Item1 - startingNodeMazeIndex.Item1), 2) +
@@ -54,6 +54,11 @@ namespace Challenges
 
     public struct Edge
     {
+        public override string ToString()
+        {
+            return $"{nameof(Weight)}: {Weight}, {nameof(StartingNode)}: {StartingNode}, {nameof(EndingNode)}: {EndingNode}";
+        }
+
         public int Weight { get; }
         public int StartingNode { get; }
         public int EndingNode { get; }

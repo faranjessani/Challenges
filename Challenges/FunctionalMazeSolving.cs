@@ -142,6 +142,8 @@ namespace Challenges
             var path = swGraphTraverser.TraverseFullGraphFrom(0);
             int totalLength = path.Sum(edge => edge.Weight);
 
+            // The path should be 0 -> 2 -> 7 -> 1 -> 5 -> 4 -> 6 -> 3
+            // The total length should be 460
             Assert.That(totalLength, Is.EqualTo(460));
         }
 
