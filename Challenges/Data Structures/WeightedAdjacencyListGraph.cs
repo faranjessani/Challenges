@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Challenges
 {
-
-    public class WeightedAdjacencyListGraph : IGraph
+    public class WeightedAdjacencyListGraph : IWeightedGraph
     {
         private readonly HashSet<AdjacentNode>[] _nodes;
 
@@ -23,6 +21,11 @@ namespace Challenges
             return _nodes[vertex].Select(n => n.NodeId);
         }
 
+        public IEnumerable<AdjacentNode> GetAdjacentNodes(int vertex)
+        {
+            return _nodes[vertex];
+        }
+
         public int GetNumberOfVerticies()
         {
             return _nodes.Length;
@@ -32,42 +35,6 @@ namespace Challenges
         {
             _nodes[vertex1].Add(new AdjacentNode(vertex2, weight));
             _nodes[vertex2].Add(new AdjacentNode(vertex1, weight));
-        }
-
-        internal struct AdjacentNode : IEquatable<AdjacentNode>
-        {
-            public int NodeId { get; }
-            public int Weight { get; }
-
-            public AdjacentNode(int nodeId, int weight)
-            {
-                NodeId = nodeId;
-                Weight = weight;
-            }
-
-            public override string ToString()
-            {
-                return $"{nameof(NodeId)}: {NodeId}, {nameof(Weight)}: {Weight}";
-            }
-
-            public bool Equals(AdjacentNode other)
-            {
-                return NodeId == other.NodeId && Weight == other.Weight;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (ReferenceEquals(null, obj)) return false;
-                return obj is AdjacentNode && Equals((AdjacentNode) obj);
-            }
-
-            public override int GetHashCode()
-            {
-                unchecked
-                {
-                    return (NodeId * 397) ^ Weight;
-                }
-            }
         }
     }
 }

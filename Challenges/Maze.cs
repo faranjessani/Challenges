@@ -96,5 +96,10 @@ namespace Challenges
         {
             return _namedNodeToGraphIndexMap[namedNode];
         }
+
+        public Tuple<int, int> GetMazeIndexForNamedNode(char namedNode)
+        {
+            return ConvertGraphIndexToMazeIndex(GetGraphNodeIndexForNamedNode(namedNode));
+        }
     }
 }

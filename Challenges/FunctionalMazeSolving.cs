@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
@@ -119,10 +120,10 @@ namespace Challenges
             IGraph mazeGraph = new AdjacencyListGraph(maze.GetNodeCount());
             maze.ParseMazeIntoGraph(ref mazeGraph);
             var graphTraverser = new NamedNodeGraphTraverser(mazeGraph);
-            IGraph shortestPathGraph = new WeightedAdjacencyListGraph(8);
+            IWeightedGraph shortestPathGraph = new WeightedAdjacencyListGraph(8);
             for (var i = 0; i <= 7; i++)
             {
-                for (var j = 0; j <= 7; j++)
+                for (var j = i; j <= 7; j++)
                 {
                     if (j == i)
                     {
@@ -137,9 +138,11 @@ namespace Challenges
             }
 
             // Implement A* algorithm in this traverser
-            //var swGraphTraverser = new SmallestWeightGraphTraverser(shortestPathGraph);
+            var swGraphTraverser = new ShortestPathTraverser(shortestPathGraph, maze);
+            var path = swGraphTraverser.TraverseFullGraphFrom(0);
+            int totalLength = path.Sum(edge => edge.Weight);
 
-            Assert.That(1, Is.EqualTo(460));
+            Assert.That(totalLength, Is.EqualTo(460));
         }
 
         private string _mazeInput =
