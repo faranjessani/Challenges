@@ -55,6 +55,7 @@
     <Compile Include="FromMazeToGraph.cs" />
     <Compile Include="Data Structures\IGraph.cs" />
     <Compile Include="FunctionalMazeSolving.cs" />
+    <Compile Include="GarbageCollectorTests.cs" />
     <Compile Include="NamedNodeGraphTraverser.cs" />
     <Compile Include="NearestNeighbourGraphTraverser.cs" />
     <Compile Include="Maze.cs" />
