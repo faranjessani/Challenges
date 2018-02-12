@@ -6,14 +6,14 @@ namespace Challenges
     [TestFixture]
     public class CharactersInIntegerString
     {
-        /// <summary>
-        /// For a given string s, comprised of positive integers
-        /// Find how many ways you can split it up so each substring is a number less than 26
-        /// ie. "123" -> 1,2,3 or 12,3 or 1,23 therefore 3
-        /// ie. "1234" -> 1,2,3,4 or 12,3,4 or 1,23,4 therefore 3
-        /// </summary>
-        /// <param name="number"></param>
-        /// <returns></returns>
+        ///	<summary>
+        ///	For a given string s, comprised of positive integers
+        ///	Find how many ways you can split it up so each substring is a number less than 26
+        ///	ie. "123" -> 1,2,3 or 12,3 or 1,23 therefore 3
+        ///	ie. "1234" -> 1,2,3,4 or 12,3,4 or 1,23,4 therefore 3
+        ///	</summary>
+        ///	<param name="number"></param>
+        ///	<returns></returns>
         private int Calculate(string number)
         {
             if (number.Length == 0)

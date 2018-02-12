@@ -30,12 +30,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FluentAssertions, Version=5.1.0.0, Culture=neutral, PublicKeyToken=33f2691a05b67b6a">
+      <HintPath>..\packages\FluentAssertions.5.1.0\lib\net45\FluentAssertions.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework, Version=3.6.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
       <HintPath>..\packages\NUnit.3.6.0\lib\net45\nunit.framework.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ValueTuple, Version=4.0.1.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
+      <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,28 +50,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CalendarConflicts.cs" />
-    <Compile Include="CharactersInIntegerString.cs" />
-    <Compile Include="CountACharacterInANumberArray.cs" />
-    <Compile Include="Data Structures\AdjacencyListGraph.cs" />
-    <Compile Include="Data Structures\AdjacencyMatrixGraph.cs" />
-    <Compile Include="Data Structures\AdjacentNode.cs" />
-    <Compile Include="Data Structures\IWeightedGraph.cs" />
-    <Compile Include="Data Structures\WeightedAdjacencyListGraph.cs" />
-    <Compile Include="FromMazeToGraph.cs" />
-    <Compile Include="Data Structures\IGraph.cs" />
-    <Compile Include="FunctionalMazeSolving.cs" />
-    <Compile Include="LetItBurn.cs" />
-    <Compile Include="NamedNodeGraphTraverser.cs" />
-    <Compile Include="NearestNeighbourGraphTraverser.cs" />
-    <Compile Include="Maze.cs" />
+    <Compile Include="From Reddit\Easy\BookshelfProblem.cs" />
+    <Compile Include="From Reddit\Easy\LetItBurn.cs" />
+    <Compile Include="From Reddit\Easy\TooManyBrackets.cs" />
+    <Compile Include="From Reddit\Easy\XORMultiplication.cs" />
+    <Compile Include="From Reddit\Hard\FunctionalMazeSolving.cs" />
+    <Compile Include="From Reddit\Intermediate\FromMazeToGraph.cs" />
+    <Compile Include="Other\CalendarConflicts.cs" />
+    <Compile Include="Other\CharactersInIntegerString.cs" />
+    <Compile Include="Other\CountACharacterInANumberArray.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShortestPathTraverser.cs" />
-    <Compile Include="TooManyBrackets.cs" />
-    <Compile Include="XORMultiplication.cs" />
+    <Compile Include="Supporting Classes\Data Structures\AdjacencyListGraph.cs" />
+    <Compile Include="Supporting Classes\Data Structures\AdjacencyMatrixGraph.cs" />
+    <Compile Include="Supporting Classes\Data Structures\AdjacentNode.cs" />
+    <Compile Include="Supporting Classes\Data Structures\IGraph.cs" />
+    <Compile Include="Supporting Classes\Data Structures\IWeightedGraph.cs" />
+    <Compile Include="Supporting Classes\Data Structures\Maze.cs" />
+    <Compile Include="Supporting Classes\Data Structures\WeightedAdjacencyListGraph.cs" />
+    <Compile Include="Supporting Classes\NamedNodeGraphTraverser.cs" />
+    <Compile Include="Supporting Classes\NearestNeighbourGraphTraverser.cs" />
+    <Compile Include="Supporting Classes\ShortestPathTraverser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="From Reddit" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

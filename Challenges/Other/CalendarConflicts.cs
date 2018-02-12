@@ -5,14 +5,14 @@ using NUnit.Framework;
 
 namespace Challenges
 {
-    /// <summary>
-    /// This problem is from Jackson Gabbard's set of interview problems
-    /// Available at: https://youtu.be/olK6SWl8UrM
-    /// In his video, he postulated that if you solve the problem by finding
-    /// events that don't conflict is easier and that didn't ring true to me
-    /// so I wrote it in that format
-    /// I ended up using a set and a map but the code came out fairly simple
-    /// </summary>
+    ///	<summary>
+    ///	This problem is from Jackson Gabbard's set of interview problems
+    ///	Available at: https://youtu.be/olK6SWl8UrM
+    ///	In his video, he postulated that if you solve the problem by finding
+    ///	events that don't conflict is easier and that didn't ring true to me
+    ///	so I wrote it in that format
+    ///	I ended up using a set and a map but the code came out fairly simple
+    ///	</summary>
     [TestFixture]
     public class CalendarConflicts
     {
